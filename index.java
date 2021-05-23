@@ -38,13 +38,17 @@ class Deck {
     return newDeck;
   }
 
+  public Card draw() {
+    return this.deck.remove(this.deck.size() - 1);
+  }
+
   public void printDeck() {
     for (int i = 0; i < this.deck.size(); i++) {
       System.out.println(this.deck.get(i).getCardString());
     }
   }
 
-  public void shuffleDeck(){
+  public void shuffleDeck() {
     for (int i = this.deck.size() - 1; i >= 0; i--) {
       int j = (int) Math.floor(Math.random() * (i + 1));
       Card temp = this.deck.get(i);
@@ -57,9 +61,7 @@ class Deck {
 class Main {
   public static void main(String[] args) {
     Deck deck1 = new Deck();
-    deck1.printDeck();
-
     deck1.shuffleDeck();
-    deck1.printDeck();
+    System.out.println(deck1.draw().getCardString());
   }
 }
