@@ -38,13 +38,17 @@ class Deck {
     return newDeck;
   }
 
+  public Card draw() {
+    return this.deck.remove(this.deck.size() - 1);
+  }
+
   public void printDeck() {
     for (int i = 0; i < this.deck.size(); i++) {
       System.out.println(this.deck.get(i).getCardString());
     }
   }
 
-  public void shuffleDeck(){
+  public void shuffleDeck() {
     for (int i = this.deck.size() - 1; i >= 0; i--) {
       int j = (int) Math.floor(Math.random() * (i + 1));
       Card temp = this.deck.get(i);
@@ -54,12 +58,31 @@ class Deck {
   }
 }
 
+class Dealer {
+  public static ArrayList<ArrayList<Card>> startGame(int amountOfPlayer) {
+    Deck deck = new Deck();
+    deck.shuffleDeck();
+    ArrayList<ArrayList<Card>> table = new ArrayList<>(2);
+    for (int i = 0; i < amountOfPlayer; i++) {
+      ArrayList<Card> playerHand = new ArrayList<Card>();
+      for (int j = 0; j < 2; j++) {
+        playerHand.add(deck.draw());
+      }
+      table.add(playerHand);
+    }
+    return table;
+  }
+}
+
 class Main {
   public static void main(String[] args) {
-    Deck deck1 = new Deck();
-    deck1.printDeck();
+    ArrayList<ArrayList<Card>> table1 = Dealer.startGame(6);
 
-    deck1.shuffleDeck();
-    deck1.printDeck();
+    for (int i = 0; i < table1.size(); i++) {
+      System.out.println(i + 1 + "人目");
+      for (Card card : table1.get(i)) {
+        System.out.println(card.getCardString());
+      }
+    }
   }
 }
