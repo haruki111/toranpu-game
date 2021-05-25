@@ -58,31 +58,47 @@ class Deck {
   }
 }
 
+class Table {
+  public int amountOfPlayers;
+  public String gameMode;
+
+  public Table(int amountOfPlayers, String gameMode) {
+    this.amountOfPlayers = amountOfPlayers;
+    this.gameMode = gameMode;
+  }
+}
+
 class Dealer {
-  public static ArrayList<ArrayList<Card>> startGame(int amountOfPlayer) {
+  public static ArrayList<ArrayList<Card>> startGame(Table table) {
     Deck deck = new Deck();
     deck.shuffleDeck();
-    ArrayList<ArrayList<Card>> table = new ArrayList<>(2);
-    for (int i = 0; i < amountOfPlayer; i++) {
-      ArrayList<Card> playerHand = new ArrayList<Card>();
-      for (int j = 0; j < 2; j++) {
+    ArrayList<ArrayList<Card>> playerCards = new ArrayList<>();
+    for (int i = 0; i < table.amountOfPlayers; i++) {
+      ArrayList<Card> playerHand = new ArrayList<Card>(Dealer.initialCards(table.gameMode));
+      for (int j = 0; j < Dealer.initialCards(table.gameMode); j++) {
         playerHand.add(deck.draw());
       }
-      table.add(playerHand);
+      playerCards.add(playerHand);
     }
-    return table;
+    return playerCards;
+  }
+
+  public static int initialCards(String gameMode) {
+    if (gameMode == "21")
+      return 2;
+    if (gameMode == "poker")
+      return 5;
+    else
+      return 0;
   }
 }
 
 class Main {
   public static void main(String[] args) {
-    ArrayList<ArrayList<Card>> table1 = Dealer.startGame(6);
-
-    for (int i = 0; i < table1.size(); i++) {
-      System.out.println(i + 1 + "人目");
-      for (Card card : table1.get(i)) {
-        System.out.println(card.getCardString());
-      }
+    Table table1 = new Table(2, "poker");
+    ArrayList<ArrayList<Card>> game1 = Dealer.startGame(table1);
+    for (int i = 0; i < game1.get(0).size(); i++) {
+      System.out.println(game1.get(0).get(i).getCardString());
     }
   }
 }
