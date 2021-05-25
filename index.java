@@ -35,6 +35,7 @@ class Deck {
         newDeck.add(new Card(suits[i], values[j], j + 1));
       }
     }
+    
     return newDeck;
   }
 
@@ -91,14 +92,22 @@ class Dealer {
     else
       return 0;
   }
+
+  public static void printTableInformation(ArrayList<ArrayList<Card>> playerCards, Table table) {
+    System.out.println("Amount of players: " + table.amountOfPlayers + "... Game mode: " + table.gameMode + ". At this table:");
+    for (int i = 0; i < playerCards.size(); i++) {
+      System.out.println("Player " + (i + 1) + " hand is:");
+      for (int j = 0; j < playerCards.get(i).size(); j++) {
+        System.out.println(playerCards.get(i).get(j).getCardString());
+      }
+    }
+  }
 }
 
 class Main {
   public static void main(String[] args) {
     Table table1 = new Table(2, "poker");
     ArrayList<ArrayList<Card>> game1 = Dealer.startGame(table1);
-    for (int i = 0; i < game1.get(0).size(); i++) {
-      System.out.println(game1.get(0).get(i).getCardString());
-    }
+    Dealer.printTableInformation(game1, table1);
   }
 }
