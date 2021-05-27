@@ -1,6 +1,7 @@
 
 // import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 class Card {
   public String suit;
@@ -35,7 +36,7 @@ class Deck {
         newDeck.add(new Card(suits[i], values[j], j + 1));
       }
     }
-    
+
     return newDeck;
   }
 
@@ -94,7 +95,8 @@ class Dealer {
   }
 
   public static void printTableInformation(ArrayList<ArrayList<Card>> playerCards, Table table) {
-    System.out.println("Amount of players: " + table.amountOfPlayers + "... Game mode: " + table.gameMode + ". At this table:");
+    System.out.println(
+        "Amount of players: " + table.amountOfPlayers + "... Game mode: " + table.gameMode + ". At this table:");
     for (int i = 0; i < playerCards.size(); i++) {
       System.out.println("Player " + (i + 1) + " hand is:");
       for (int j = 0; j < playerCards.get(i).size(); j++) {
@@ -102,12 +104,65 @@ class Dealer {
       }
     }
   }
+
+  public static int score21Individual(ArrayList<Card> cards) {
+    int value = 0;
+    for (Card card : cards) {
+      value += card.intValue;
+    }
+    if (value > 21)
+      return 0;
+    return value;
+  }
+
+  public static String winnerOf21(ArrayList<ArrayList<Card>> playerCards) {
+    int[] points = new int[playerCards.size()]; // プレーヤーの点数を入れる
+    int[] cache = new int[22]; // スコアにプレイヤーが何人いるか
+
+    for (int i = 0; i < playerCards.size(); i++) {
+      int point = Dealer.score21Individual(playerCards.get(i));// 各プレイヤーの合計スコアを代入
+      points[i] = point;
+
+      if (cache[point] >= 1) // そのスコアに何人プレーヤーがいるかif文で処理
+        cache[point] += 1;
+      else
+        cache[point] = 1;
+    }
+
+    System.out.println(Arrays.toString(points));// 各プレイヤーの合計値の一覧
+
+    int winnerIndex = HelperFunctions.maxInArrayIndex(points); // 最大値のプレイヤーの配列の位置
+    if (cache[points[winnerIndex]] > 1)// 最大値のキャッシュを判定
+      return "It is a draw ";
+    else if (cache[points[winnerIndex]] >= 0)
+      return "player " + (winnerIndex + 1) + " is the winner";
+    else
+      return "No winners..";
+  }
+}
+
+class HelperFunctions {
+
+  public static int maxInArrayIndex(int[] intArr) {// 最大値の配列の位置を返す
+    int maxIndex = 0;
+    int maxValue = intArr[0];
+
+    for (int i = 0; i < intArr.length; i++) {
+      if (intArr[i] > maxValue) {
+        maxValue = intArr[i];
+        maxIndex = i;
+      }
+    }
+    return maxIndex;
+  }
 }
 
 class Main {
   public static void main(String[] args) {
-    Table table1 = new Table(2, "poker");
+    Table table1 = new Table(4, "21");
     ArrayList<ArrayList<Card>> game1 = Dealer.startGame(table1);
     Dealer.printTableInformation(game1, table1);
+
+    System.out.println(Dealer.winnerOf21(game1));
   }
 }
