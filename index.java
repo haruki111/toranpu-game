@@ -2,6 +2,7 @@
 // import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 class Card {
   public String suit;
@@ -22,18 +23,33 @@ class Card {
 class Deck {
   public ArrayList<Card> deck;
 
-  public Deck() {
-    this.deck = Deck.generateDeck();
+  public Deck(Table table) {
+    this.deck = Deck.generateDeck(table);
   }
 
-  public static ArrayList<Card> generateDeck() {
+  public static ArrayList<Card> generateDeck(Table table) {
     ArrayList<Card> newDeck = new ArrayList<>();
     String[] suits = new String[] { "♣", "♦", "♥", "♠" };
     String[] values = new String[] { "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
 
+    HashMap<String, Integer> blackJack = new HashMap<>() {
+      {
+        put("A", 1);
+        put("J", 10);
+        put("Q", 10);
+        put("K", 10);
+      }
+    };
+
     for (int i = 0; i < suits.length; i++) {
       for (int j = 0; j < values.length; j++) {
-        newDeck.add(new Card(suits[i], values[j], j + 1));
+        if (table.gameMode == "21") {
+          newDeck
+              .add(new Card(suits[i], values[j], blackJack.get(values[j]) == null ? j + 1 : blackJack.get(values[j])));
+        } else {
+          newDeck.add(new Card(suits[i], values[j], j + 1));
+        }
+
       }
     }
 
@@ -72,7 +88,7 @@ class Table {
 
 class Dealer {
   public static ArrayList<ArrayList<Card>> startGame(Table table) {
-    Deck deck = new Deck();
+    Deck deck = new Deck(table);
     deck.shuffleDeck();
     ArrayList<ArrayList<Card>> playerCards = new ArrayList<>();
     for (int i = 0; i < table.amountOfPlayers; i++) {
@@ -139,6 +155,14 @@ class Dealer {
     else
       return "No winners..";
   }
+
+  // 卓のゲームの種類によって勝利条件を変更するcheckWinnerというメソッドを作成します。
+  public static String checkWinner(ArrayList<ArrayList<Card>> playerCards, Table table) {
+    if (table.gameMode == "21")
+      return Dealer.winnerOf21(playerCards);
+    else
+      return "no game";
+  }
 }
 
 class HelperFunctions {
@@ -159,10 +183,16 @@ class HelperFunctions {
 
 class Main {
   public static void main(String[] args) {
-    Table table1 = new Table(4, "21");
+    Table table1 = new Table(1, "poker");
     ArrayList<ArrayList<Card>> game1 = Dealer.startGame(table1);
-    Dealer.printTableInformation(game1, table1);
 
-    System.out.println(Dealer.winnerOf21(game1));
+    Table table2 = new Table(3, "21");
+    ArrayList<ArrayList<Card>> game2 = Dealer.startGame(table2);
+
+    Dealer.printTableInformation(game1, table1);
+    System.out.println(Dealer.checkWinner(game1, table1));
+
+    Dealer.printTableInformation(game2, table2);
+    System.out.println(Dealer.checkWinner(game2, table2));
   }
 }
