@@ -106,7 +106,7 @@ class Dealer {
       return 2;
     if (gameMode == "poker")
       return 5;
-    if (gameMode == "Pair of cards")
+    if (gameMode == "Pair of Cards")
       return 5;
     else
       return 0;
@@ -190,6 +190,7 @@ class Dealer {
       }
     }
 
+    System.out.println("The winner of this game is ");
     return winner;
   }
 
@@ -197,7 +198,7 @@ class Dealer {
   public static String checkWinner(ArrayList<ArrayList<Card>> playerCards, Table table) {
     if (table.gameMode == "21")
       return Dealer.winnerOf21(playerCards);
-    if (table.gameMode == "Pair of cards")
+    if (table.gameMode == "Pair of Cards")
       return Dealer.winnerPairOfCards(playerCards);
     else
       return "no game";
@@ -242,7 +243,7 @@ class HelperFunctions {
 
 class Main {
   public static void main(String[] args) {
-    Table table3 = new Table(2, "Pair of cards");
+    Table table3 = new Table(2, "Pair of Cards");
     ArrayList<ArrayList<Card>> game3 = Dealer.startGame(table3);
     Dealer.printTableInformation(game3, table3);
     System.out.println(Dealer.checkWinner(game3, table3));
