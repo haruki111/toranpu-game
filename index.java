@@ -106,6 +106,8 @@ class Dealer {
       return 2;
     if (gameMode == "poker")
       return 5;
+    if (gameMode == "Pair of cards")
+      return 5;
     else
       return 0;
   }
@@ -156,13 +158,51 @@ class Dealer {
       return "No winners..";
   }
 
+  private static String winnerPairOfCards(ArrayList<ArrayList<Card>> playerCards) {
+    String[] generateNumberArr1 = HelperFunctions.generateNumberArr(playerCards.get(0));
+    String[] generateNumberArr2 = HelperFunctions.generateNumberArr(playerCards.get(1));
+
+    final String[] cardPower = new String[] { "A", "K", "Q", "J", "10", "9", "8", "7", "6", "5", "4", "3", "2" };
+
+    HashMap<String, Integer> player1Deck = HelperFunctions.createHashMap(cardPower, generateNumberArr1);
+    HashMap<String, Integer> player2Deck = HelperFunctions.createHashMap(cardPower, generateNumberArr2);
+
+    // デフォルトで引き分けを返します。
+    String winner = "draw";
+    // 同じランクのカードの枚数を記録します。
+    int pairOfCards = 0;
+
+    for (int i = 0; i < cardPower.length; i++) {
+      // それぞれのhashmapをcardPowerの強い順に比較していきます。0または同じ枚数の時は次のランクへ。
+      // プレイヤー1が持つ同じランクのカードが多いとき
+      if (player1Deck.get(cardPower[i]) > player2Deck.get(cardPower[i])) {
+        // 記録しているカードの枚数よりプレイヤー1が持つカードの枚数が多かったら、
+        if (pairOfCards < player1Deck.get(cardPower[i])) {
+          // pairOfCardsとwinnerをプレイヤー1に書き換えます。
+          pairOfCards = player1Deck.get(cardPower[i]);
+          winner = "player1";
+        }
+      } else if (player1Deck.get(cardPower[i]) < player2Deck.get(cardPower[i])) {
+        if (pairOfCards < player2Deck.get(cardPower[i])) {
+          pairOfCards = player2Deck.get(cardPower[i]);
+          winner = "player2";
+        }
+      }
+    }
+
+    return winner;
+  }
+
   // 卓のゲームの種類によって勝利条件を変更するcheckWinnerというメソッドを作成します。
   public static String checkWinner(ArrayList<ArrayList<Card>> playerCards, Table table) {
     if (table.gameMode == "21")
       return Dealer.winnerOf21(playerCards);
+    if (table.gameMode == "Pair of cards")
+      return Dealer.winnerPairOfCards(playerCards);
     else
       return "no game";
   }
+
 }
 
 class HelperFunctions {
@@ -179,10 +219,34 @@ class HelperFunctions {
     }
     return maxIndex;
   }
+
+  public static String[] generateNumberArr(ArrayList<Card> cards) {
+    String[] generateNumberArr = new String[cards.size()];
+    for (int i = 0; i < cards.size(); i++) {
+      generateNumberArr[i] = cards.get(i).value;
+    }
+    return generateNumberArr;
+  }
+
+  public static HashMap<String, Integer> createHashMap(String[] cardPower, String[] player) {
+    HashMap<String, Integer> playerDeck = new HashMap<>();
+    for (int i = 0; i < cardPower.length; i++) {
+      playerDeck.put(cardPower[i], 0);
+    }
+    for (int i = 0; i < player.length; i++) {
+      playerDeck.replace(player[i], playerDeck.get(player[i]) + 1);
+    }
+    return playerDeck;
+  }
 }
 
 class Main {
   public static void main(String[] args) {
+    Table table3 = new Table(2, "Pair of cards");
+    ArrayList<ArrayList<Card>> game3 = Dealer.startGame(table3);
+    Dealer.printTableInformation(game3, table3);
+    System.out.println(Dealer.checkWinner(game3, table3));
+
     Table table1 = new Table(1, "poker");
     ArrayList<ArrayList<Card>> game1 = Dealer.startGame(table1);
 
