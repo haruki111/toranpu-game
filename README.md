@@ -1,3 +1,3 @@
 # Description
 Recursionの中級のトランプゲームのデザインです。
-ブラックジャックとPair of Cardsができます
+<br> ブラックジャックとPair of Cardsができます
